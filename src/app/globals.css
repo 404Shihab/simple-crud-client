@@ -1,3 +1,11 @@
 @import "tailwindcss";
 @import "@heroui/styles/css"; 
 
+:root {
+    --brand: #1F2937;       /* button, links (deep slate) */
+    --brand-dark: #111827;  /* headings, button hover */
+    --accent: #DC2626;      /* icon, dot, hover border, CRUD highlight (red) */
+    --tint: #FEF2F2;        /* card bg, icon tile, CTA bg (very light red) */
+    --muted: #6B7280;       /* paragraph text */
+    --border: #E5E7EB;      /* card borders (neutral gray) */
+}

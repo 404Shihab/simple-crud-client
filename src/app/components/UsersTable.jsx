@@ -13,12 +13,28 @@ const getInitials = (name = "") =>
         .join("")
         .toUpperCase();
 
+const detailsButtonClass =
+    "border border-[var(--border)] bg-white text-[var(--brand-dark)] hover:bg-[var(--tint)]";
+
+const iconButtonClass = "text-[var(--muted)] hover:bg-[var(--tint)] hover:text-[var(--brand-dark)]";
+
+const UserAvatar = ({ name }) => (
+    <Avatar size="sm">
+        <Avatar.Fallback className="bg-[var(--tint)] font-medium text-[var(--brand-dark)]">
+            {getInitials(name)}
+        </Avatar.Fallback>
+    </Avatar>
+);
+
 const RoleChip = ({ role }) => (
     <Chip
         size="sm"
         variant="soft"
-        color={role === "admin" ? "accent" : "default"}
-        className="capitalize"
+        className={`capitalize ${
+            role === "admin"
+                ? "bg-[var(--accent)]/20 text-[var(--brand-dark)]"
+                : "bg-[var(--tint)] text-[var(--muted)]"
+        }`}
     >
         {role}
     </Chip>
@@ -47,39 +63,43 @@ const UsersTable = ({ users = [], deleteUserAction }) => {
     };
 
     return (
-        <div className="w-full overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
-            <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-4 sm:px-5">
+        <div className="w-full overflow-hidden rounded-2xl border border-[var(--border)] bg-white">
+            {/* Header */}
+            <div className="flex items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--tint)] px-4 py-4 sm:px-5">
                 <div className="min-w-0">
-                    <h2 className="text-lg font-semibold">Users</h2>
-                    <p className="text-sm text-muted">
+                    <h2 className="text-lg font-semibold text-[var(--brand-dark)]">
+                        Users
+                    </h2>
+                    <p className="text-sm text-[var(--muted)]">
                         Manage your team members and their roles
                     </p>
                 </div>
-                <Chip size="sm" variant="soft" className="shrink-0">
+                <Chip
+                    size="sm"
+                    variant="soft"
+                    className="shrink-0 bg-white text-[var(--brand-dark)]"
+                >
                     {users.length} total
                 </Chip>
             </div>
 
+            {/* Mobile list */}
             <div className="md:hidden">
                 {users.length === 0 ? (
-                    <div className="py-10 text-center text-muted">
+                    <div className="py-10 text-center text-[var(--muted)]">
                         No users found
                     </div>
                 ) : (
-                    <ul className="divide-y divide-border">
+                    <ul className="divide-y divide-[var(--border)]">
                         {users.map((user) => (
                             <li key={user._id} className="flex flex-col gap-3 p-4">
                                 <div className="flex items-center gap-3">
-                                    <Avatar size="sm">
-                                        <Avatar.Fallback>
-                                            {getInitials(user.name)}
-                                        </Avatar.Fallback>
-                                    </Avatar>
+                                    <UserAvatar name={user.name} />
                                     <div className="min-w-0 flex-1">
-                                        <p className="truncate font-medium">
+                                        <p className="truncate font-medium text-[var(--brand-dark)]">
                                             {user.name}
                                         </p>
-                                        <p className="truncate text-sm text-muted">
+                                        <p className="truncate text-sm text-[var(--muted)]">
                                             {user.email}
                                         </p>
                                     </div>
@@ -90,10 +110,8 @@ const UsersTable = ({ users = [], deleteUserAction }) => {
                                     <Button
                                         size="sm"
                                         variant="secondary"
-                                        className="flex-1"
-                                        onPress={() =>
-                                            router.push(`/users/${user._id}`)
-                                        }
+                                        className={`flex-1 ${detailsButtonClass}`}
+                                        onPress={() => router.push(`/users/${user._id}`)}
                                     >
                                         <Eye width={16} height={16} />
                                         Details
@@ -102,6 +120,7 @@ const UsersTable = ({ users = [], deleteUserAction }) => {
                                         isIconOnly
                                         size="sm"
                                         variant="ghost"
+                                        className={iconButtonClass}
                                         aria-label="Edit user"
                                         onPress={() =>
                                             router.push(`/users/${user._id}/edit`)
@@ -126,6 +145,7 @@ const UsersTable = ({ users = [], deleteUserAction }) => {
                 )}
             </div>
 
+            {/* Desktop table */}
             <div className="hidden md:block">
                 <Table>
                     <Table.ScrollContainer>
@@ -134,14 +154,12 @@ const UsersTable = ({ users = [], deleteUserAction }) => {
                                 <Table.Column isRowHeader>NAME</Table.Column>
                                 <Table.Column>EMAIL</Table.Column>
                                 <Table.Column>ROLE</Table.Column>
-                                <Table.Column className="text-end">
-                                    ACTIONS
-                                </Table.Column>
+                                <Table.Column className="text-end">ACTIONS</Table.Column>
                             </Table.Header>
 
                             <Table.Body
                                 renderEmptyState={() => (
-                                    <div className="py-10 text-center text-muted">
+                                    <div className="py-10 text-center text-[var(--muted)]">
                                         No users found
                                     </div>
                                 )}
@@ -150,19 +168,15 @@ const UsersTable = ({ users = [], deleteUserAction }) => {
                                     <Table.Row key={user._id} id={user._id}>
                                         <Table.Cell>
                                             <div className="flex items-center gap-3">
-                                                <Avatar size="sm">
-                                                    <Avatar.Fallback>
-                                                        {getInitials(user.name)}
-                                                    </Avatar.Fallback>
-                                                </Avatar>
-                                                <span className="font-medium">
+                                                <UserAvatar name={user.name} />
+                                                <span className="font-medium text-[var(--brand-dark)]">
                                                     {user.name}
                                                 </span>
                                             </div>
                                         </Table.Cell>
 
                                         <Table.Cell>
-                                            <span className="text-muted">
+                                            <span className="text-[var(--muted)]">
                                                 {user.email}
                                             </span>
                                         </Table.Cell>
@@ -176,10 +190,9 @@ const UsersTable = ({ users = [], deleteUserAction }) => {
                                                 <Button
                                                     size="sm"
                                                     variant="secondary"
+                                                    className={detailsButtonClass}
                                                     onPress={() =>
-                                                        router.push(
-                                                            `/users/${user._id}`
-                                                        )
+                                                        router.push(`/users/${user._id}`)
                                                     }
                                                 >
                                                     <Eye width={16} height={16} />
@@ -191,6 +204,7 @@ const UsersTable = ({ users = [], deleteUserAction }) => {
                                                         isIconOnly
                                                         size="sm"
                                                         variant="ghost"
+                                                        className={iconButtonClass}
                                                         aria-label="Edit user"
                                                         onPress={() =>
                                                             router.push(
@@ -198,10 +212,7 @@ const UsersTable = ({ users = [], deleteUserAction }) => {
                                                             )
                                                         }
                                                     >
-                                                        <Pencil
-                                                            width={16}
-                                                            height={16}
-                                                        />
+                                                        <Pencil width={16} height={16} />
                                                     </Button>
                                                     <Tooltip.Content>
                                                         <p>Edit user</p>
@@ -215,14 +226,9 @@ const UsersTable = ({ users = [], deleteUserAction }) => {
                                                         variant="ghost"
                                                         className="text-danger"
                                                         aria-label="Delete user"
-                                                        onPress={() =>
-                                                            setUserToDelete(user)
-                                                        }
+                                                        onPress={() => setUserToDelete(user)}
                                                     >
-                                                        <TrashBin
-                                                            width={16}
-                                                            height={16}
-                                                        />
+                                                        <TrashBin width={16} height={16} />
                                                     </Button>
                                                     <Tooltip.Content>
                                                         <p>Delete user</p>
@@ -238,6 +244,7 @@ const UsersTable = ({ users = [], deleteUserAction }) => {
                 </Table>
             </div>
 
+            {/* Delete confirmation */}
             <AlertDialog.Backdrop
                 isOpen={!!userToDelete}
                 onOpenChange={(open) => {
@@ -249,18 +256,13 @@ const UsersTable = ({ users = [], deleteUserAction }) => {
                         <AlertDialog.CloseTrigger />
                         <AlertDialog.Header>
                             <AlertDialog.Icon status="danger" />
-                            <AlertDialog.Heading>
-                                Delete this user?
-                            </AlertDialog.Heading>
+                            <AlertDialog.Heading>Delete this user?</AlertDialog.Heading>
                         </AlertDialog.Header>
                         <AlertDialog.Body>
                             <p>
                                 You are about to delete{" "}
-                                <span className="font-semibold">
-                                    {userToDelete?.name}
-                                </span>{" "}
-                                ({userToDelete?.email}). This action cannot be
-                                undone.
+                                <span className="font-semibold">{userToDelete?.name}</span>{" "}
+                                ({userToDelete?.email}). This action cannot be undone.
                             </p>
                         </AlertDialog.Body>
                         <AlertDialog.Footer>
